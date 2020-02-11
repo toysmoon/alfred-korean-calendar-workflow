@@ -48,8 +48,7 @@ function parseWordType(word) {
 
 function getDateAndTitle(nl) {
   let time = undefined;
-  console.log(nl.split(' '));
-  const words = nl.split(' ').map(parseWordType);
+  const words = nl.map(parseWordType);
   const title = words
     .filter(word => word.type === 'title')
     .map(word => word.value)
@@ -103,15 +102,15 @@ function getCalendar() {
   return Application('Calendar');
 }
 
-function getProject(calendar) {
-  const projectCalendars = calendar.calendars.whose({ name: '개인' });
+function getProject(calendar, projectName) {
+  const projectCalendars = calendar.calendars.whose({ name: projectName });
   return projectCalendars[0];
 }
 
 function run(argv) {
-  const query = argv[0];
+  const [calendarName, ...query] = argv[0].split(' ');
   const calendar = getCalendar();
-  const project = getProject(calendar);
+  const project = getProject(calendar, calendarName);
   const eventProps = runNPL(query);
   const event = calendar.Event(eventProps);
 

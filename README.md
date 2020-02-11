@@ -8,13 +8,9 @@ korean-calendar.alfredworkflow
 
 ## 기본 프로젝트 이름 설정
 
-Alfred Preferences -> Workflows -> Apple Calendar -> open (Run Script)
+Alfred Preferences -> Workflows -> Apple Calendar -> 오른쪽 상단 [X] 모양 클릭
 
-프로젝트 이름을 아래 부분을 찾아서 수정해주세요.
-
-```
-const projectName = '개인'
-```
+calenderName 의 value 에 자신의 apple calender 의 이름을 넣어주시기 바랍니다.
 
 # 사용
 
