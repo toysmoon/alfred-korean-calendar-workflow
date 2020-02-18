@@ -3,12 +3,16 @@ function isDate(word) {
   return word.match(dayReg);
 }
 
-function isTomorrow(word) {
-  return word.match(/내일/);
+function isToday(word) {
+  return word.match(/오늘|today/);
 }
 
-function isToday(word) {
-  return word.match(/오늘/);
+function isTomorrow(word) {
+  return word.match(/내일|tomorrow/);
+}
+
+function isAfterDay(word) {
+  return word.match(/([0-9]|[1-9][0-9])day$/);
 }
 
 function isTime(word) {
@@ -36,6 +40,9 @@ function parseWordType(word) {
     return { type: 'date', value: getDateString(1) };
   } else if (isToday(word)) {
     return { type: 'date', value: getDateString(0) };
+  } else if (isAfterDay(word)) {
+    const afterDay = parseInt(word.replace('day', ''), 10);
+    return { type: 'date', value: getDateString(afterDay) };
   } else if (isTime(word)) {
     const hour = Number(word.replace('시', ''));
     const value = `${hour}-${hour + 1}`;
