@@ -22,6 +22,9 @@ korean-calendar.alfredworkflow
 
 - 오늘
 - 내일
+- today
+- tomorrow
+- 3day
 - 12/23
 - 3시
 - 15-17시
