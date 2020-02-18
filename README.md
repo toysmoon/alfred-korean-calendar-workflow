@@ -8,9 +8,7 @@ korean-calendar.alfredworkflow
 
 ## 기본 프로젝트 이름 설정
 
-Alfred Preferences -> Workflows -> Apple Calendar -> 오른쪽 상단 [X] 모양 클릭
-
-calenderName 의 value 에 자신의 apple calender 의 이름을 넣어주시기 바랍니다.
+![캘린더 이름 설정 위치](https://user-images.githubusercontent.com/8228684/74697376-e499f880-523d-11ea-9602-ee8e3d842852.png)
 
 # 사용
 
