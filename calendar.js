@@ -1,3 +1,12 @@
+ObjC.import('stdlib');
+const defaultCalendarName = $.getenv('calendarName');
+const calendarListString = $.getenv('calendarList');
+const calenderMap = calendarListString.split(',').reduce((result, item) => {
+  const [key, value] = item.split(':');
+  result[key] = value;
+  return result;
+}, {});
+
 function isDate(word) {
   const dayReg = /(^[0-9]|[0-1][0-2])\/([0-9]$|[3][0-1]|[0-2][0-9])/;
   return word.match(dayReg);
@@ -25,6 +34,10 @@ function isTimeRange(word) {
   return word.match(timeReg);
 }
 
+function isCalendarName(word) {
+  return Object.keys(calenderMap).includes(word);
+}
+
 function getDateString(afterDayCount = 0) {
   const today = new Date();
   today.setDate(today.getDate() + afterDayCount);
@@ -49,11 +62,13 @@ function parseWordType(word) {
     return { type: 'time', value: value };
   } else if (isTimeRange(word)) {
     return { type: 'time', value: word.replace('시', '') };
+  } else if (isCalendarName(word)) {
+    return { type: 'calendar', value: calenderMap[word] };
   }
   return { type: 'title', value: word };
 }
 
-function getDateAndTitle(nl) {
+function toObjectByType(nl) {
   let time = undefined;
   const words = nl.map(parseWordType);
   const title = words
@@ -71,11 +86,15 @@ function getDateAndTitle(nl) {
     .map(word => word.value)
     .slice(0, 1);
 
+  const calendarName = words
+    .filter(word => word.type === 'calendar')
+    .map(word => word.value)[0];
+
   if (timeRange.length) {
     time = timeRange[0].split('-');
   }
 
-  return { title, date, time };
+  return { calendarName, title, date, time };
 }
 
 function getDate(date = '/', time = null, defaultDate) {
@@ -97,10 +116,10 @@ function getDateRange(date = [], time = []) {
 }
 
 function runNPL(nl) {
-  const { date, time, title } = getDateAndTitle(nl);
+  const { date, time, title, calendarName } = toObjectByType(nl);
   const [startDate, endDate] = getDateRange(date, time);
   const alldayEvent = !time;
-  return { startDate, endDate, summary: title, alldayEvent };
+  return { calendarName, startDate, endDate, summary: title, alldayEvent };
 }
 
 function getCalendar() {
@@ -115,12 +134,14 @@ function getProject(calendar, projectName) {
 }
 
 function run(argv) {
-  const [calendarName, ...query] = argv[0].split(' ');
+  const query = argv[0].split(' ');
+  const { calendarName, ...eventProps } = runNPL(query);
+
   const calendar = getCalendar();
-  const project = getProject(calendar, calendarName);
-  const eventProps = runNPL(query);
   const event = calendar.Event(eventProps);
 
+  const project = getProject(calendar, calendarName || defaultCalendarName);
   project.events.push(event);
+
   return eventProps.summary;
 }
